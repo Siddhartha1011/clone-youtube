@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { sampleVideos } from "../data/mockVideos";
 import { channelMeta } from "../data/channelMeta";
 import "../styles/channel.css";
+import useCountUp from "../hooks/useCountUp";
 
 const ChannelPage = () => {
   const { name } = useParams();
@@ -15,7 +16,7 @@ const ChannelPage = () => {
 
   const channelName = channelVideos[0]?.channelName || name;
 
-  // 🎯 get channel metadata by name
+  // get channel metadata by name
   const meta = channelMeta[channelName] || {};
 
   // localStorage subscribe state per channel
@@ -23,6 +24,11 @@ const ChannelPage = () => {
   const [subscribed, setSubscribed] = useState(
     () => localStorage.getItem(storageKey) === "true"
   );
+
+  // animated subscribers
+  const baseSubscribers = meta.subscribers || 0;
+  const subscriberTarget = baseSubscribers + (subscribed ? 1 : 0);
+  const animatedSubscribers = useCountUp(subscriberTarget, 650);
 
   const [activeTab, setActiveTab] = useState("Videos");
 
@@ -34,7 +40,7 @@ const ChannelPage = () => {
 
   return (
     <div className="channel-page">
-      {/* ✅ Banner from channelMeta */}
+      {/*  Banner from channelMeta */}
       <div
         className="channel-banner"
         style={
@@ -49,25 +55,25 @@ const ChannelPage = () => {
       />
 
       <div className="channel-header">
-        {/* ✅ Avatar from channelMeta with fallback */}
+        {/*  Avatar from channelMeta with fallback */}
         <div className="channel-avatar">
           {meta.avatar ? (
             <img
               src={meta.avatar}
               alt={channelName}
               onError={(e) => {
-                // hide broken image; fallback letter will still show if you want it
                 e.currentTarget.style.display = "none";
               }}
             />
-          ) : null}
-          {!meta.avatar && <span>{channelName?.[0]?.toUpperCase()}</span>}
+          ) : (
+            <span>{channelName?.[0]?.toUpperCase()}</span>
+          )}
         </div>
 
         <div className="channel-meta">
           <h2 className="channel-title">{channelName}</h2>
           <p className="channel-subtext">
-            {channelVideos.length} videos • {subscribed ? "Subscribed" : "Not subscribed"}
+            {animatedSubscribers.toLocaleString()} subscribers • {channelVideos.length} videos
           </p>
         </div>
 
