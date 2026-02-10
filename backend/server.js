@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js";
+import protect from "./middlewares/auth.middleware.js";
 
 dotenv.config();
 connectDB();
@@ -19,3 +20,10 @@ const PORT = process.env.PORT || 3500;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+app.get("/api/protected", protect, (req, res) => {
+    res.json({
+      message: "Access granted",
+      user: req.user,
+    });
+  });
