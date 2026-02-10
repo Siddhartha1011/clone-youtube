@@ -1,4 +1,25 @@
-.video-grid {
+.filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  
+  .filter-btn {
+    border: 1px solid #ddd;
+    background: #f7f7f7;
+    padding: 8px 12px;
+    border-radius: 18px;
+    cursor: pointer;
+  }
+  
+  .filter-btn.active {
+    background: #111;
+    color: white;
+    border-color: #111;
+  }
+
+  .video-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;

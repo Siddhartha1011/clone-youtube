@@ -1,15 +1,21 @@
+import { useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
-const Layout = ({ children }) => {
+const Layout = ({ children, searchTerm, setSearchTerm }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   return (
     <>
-      <Header />
+      <Header
+        onToggleSidebar={() => setSidebarOpen((s) => !s)}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+      />
+
       <div style={{ display: "flex" }}>
-        <Sidebar />
-        <main style={{ flex: 1, padding: "16px" }}>
-          {children}
-        </main>
+        {sidebarOpen && <Sidebar />}
+        <main style={{ flex: 1, padding: "16px" }}>{children}</main>
       </div>
     </>
   );

@@ -23,3 +23,12 @@
     width: 400px;
     padding: 6px 10px;
   }
+
+  .icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+  }

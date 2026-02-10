@@ -1,156 +1,204 @@
+import { useMemo, useState } from "react";
 import VideoCard from "../components/VideoCard";
 import "../styles/video.css";
 
-const sampleVideos = [
-  {
-    videoId: "Ke90Tje7VS0",
-    title: "Learn React in 30 Minutes",
-    thumbnailUrl: "https://img.youtube.com/vi/Ke90Tje7VS0/hqdefault.jpg",
-    channelName: "Programming with Mosh",
-    views: 1520000,
-  },
-  {
-    videoId: "TlB_eWDSMt4",
-    title: "Node.js Crash Course",
-    thumbnailUrl: "https://img.youtube.com/vi/TlB_eWDSMt4/hqdefault.jpg",
-    channelName: "Traversy Media",
-    views: 980000,
-  },
-  {
-    videoId: "ofme2o29ngU",
-    title: "MongoDB in 1 Hour",
-    thumbnailUrl: "https://img.youtube.com/vi/ofme2o29ngU/hqdefault.jpg",
-    channelName: "Academind",
-    views: 760000,
-  },
-  {
-    videoId: "PkZNo7MFNFg",
-    title: "JavaScript Full Course",
-    thumbnailUrl: "https://img.youtube.com/vi/PkZNo7MFNFg/hqdefault.jpg",
-    channelName: "freeCodeCamp",
-    views: 4500000,
-  },
-  {
-    videoId: "ZxKM3DCV2kE",
-    title: "React Router Tutorial",
-    thumbnailUrl: "https://img.youtube.com/vi/ZxKM3DCV2kE/hqdefault.jpg",
-    channelName: "Web Dev Simplified",
-    views: 620000,
-  },
-  {
-    videoId: "bMknfKXIFA8",
-    title: "React Hooks Explained",
-    thumbnailUrl: "https://img.youtube.com/vi/bMknfKXIFA8/hqdefault.jpg",
-    channelName: "Academind",
-    views: 880000,
-  },
-  {
-    videoId: "qz0aGYrrlhU",
-    title: "HTML Crash Course",
-    thumbnailUrl: "https://img.youtube.com/vi/qz0aGYrrlhU/hqdefault.jpg",
-    channelName: "Traversy Media",
-    views: 2100000,
-  },
-  {
-    videoId: "1Rs2ND1ryYc",
-    title: "CSS Flexbox Tutorial",
-    thumbnailUrl: "https://img.youtube.com/vi/1Rs2ND1ryYc/hqdefault.jpg",
-    channelName: "Web Dev Simplified",
-    views: 1300000,
-  },
-  {
-    videoId: "fBNz5xF-Kx4",
-    title: "Express.js Crash Course",
-    thumbnailUrl: "https://img.youtube.com/vi/fBNz5xF-Kx4/hqdefault.jpg",
-    channelName: "Traversy Media",
-    views: 540000,
-  },
-  {
-    videoId: "jS4aFq5-91M",
-    title: "JWT Authentication Explained",
-    thumbnailUrl: "https://img.youtube.com/vi/jS4aFq5-91M/hqdefault.jpg",
-    channelName: "Web Dev Simplified",
-    views: 470000,
-  },
-  {
-    videoId: "ENrzD9HAZK4",
-    title: "Redux Toolkit Tutorial",
-    thumbnailUrl: "https://img.youtube.com/vi/ENrzD9HAZK4/hqdefault.jpg",
-    channelName: "Codevolution",
-    views: 390000,
-  },
-  {
-    videoId: "Oe421EPjeBE",
-    title: "Git & GitHub Crash Course",
-    thumbnailUrl: "https://img.youtube.com/vi/Oe421EPjeBE/hqdefault.jpg",
-    channelName: "Traversy Media",
-    views: 1700000,
-  },
-  {
-    videoId: "HGgyd1bYWsE",
-    title: "REST API Explained",
-    thumbnailUrl: "https://img.youtube.com/vi/HGgyd1bYWsE/hqdefault.jpg",
-    channelName: "Academind",
-    views: 410000,
-  },
-  {
-    videoId: "7CqJlxBYj-M",
-    title: "MongoDB Aggregation",
-    thumbnailUrl: "https://img.youtube.com/vi/7CqJlxBYj-M/hqdefault.jpg",
-    channelName: "MongoDB",
-    views: 290000,
-  },
-  {
-    videoId: "nu_pCVPKzTk",
-    title: "Async JavaScript",
-    thumbnailUrl: "https://img.youtube.com/vi/nu_pCVPKzTk/hqdefault.jpg",
-    channelName: "freeCodeCamp",
-    views: 960000,
-  },
-  {
-    videoId: "kUMe1FH4CHE",
-    title: "CSS Grid Tutorial",
-    thumbnailUrl: "https://img.youtube.com/vi/kUMe1FH4CHE/hqdefault.jpg",
-    channelName: "Traversy Media",
-    views: 1850000,
-  },
-  {
-    videoId: "dGcsHMXbSOA",
-    title: "React Project Tutorial",
-    thumbnailUrl: "https://img.youtube.com/vi/dGcsHMXbSOA/hqdefault.jpg",
-    channelName: "Programming with Mosh",
-    views: 1100000,
-  },
-  {
-    videoId: "rLTYHv5i2oY",
-    title: "Node Authentication",
-    thumbnailUrl: "https://img.youtube.com/vi/rLTYHv5i2oY/hqdefault.jpg",
-    channelName: "Academind",
-    views: 520000,
-  },
-  {
-    videoId: "yfoY53QXEnI",
-    title: "CSS Animations",
-    thumbnailUrl: "https://img.youtube.com/vi/yfoY53QXEnI/hqdefault.jpg",
-    channelName: "Dev Ed",
-    views: 740000,
-  },
-  {
-    videoId: "RGOj5yH7evk",
-    title: "GitHub for Beginners",
-    thumbnailUrl: "https://img.youtube.com/vi/RGOj5yH7evk/hqdefault.jpg",
-    channelName: "freeCodeCamp",
-    views: 1250000,
-  },
-];
+const categories = ["All","Gaming","Entertainment","Sports","Computers","IT & Software","News",
+  ];
 
-const Home = () => {
+  const sampleVideos = [
+    {
+      videoId: "G3e-cpL7ofc",
+      title: "Gaming Setup Tour 2025 - Budget to Pro",
+      thumbnailUrl: "https://img.youtube.com/vi/G3e-cpL7ofc/hqdefault.jpg",
+      channelName: "TechSource",
+      views: 1250000,
+      category: "Gaming",
+    },
+    {
+      videoId: "L_b0P2p0Z9c",
+      title: "Top 10 Games You Must Play This Year",
+      thumbnailUrl: "https://img.youtube.com/vi/L_b0P2p0Z9c/hqdefault.jpg",
+      channelName: "IGN",
+      views: 980000,
+      category: "Gaming",
+    },
+    {
+      videoId: "HluANRwPyNo",
+      title: "Funniest Moments Compilation",
+      thumbnailUrl: "https://img.youtube.com/vi/HluANRwPyNo/hqdefault.jpg",
+      channelName: "Comedy Central",
+      views: 5400000,
+      category: "Entertainment",
+    },
+    {
+      videoId: "e-ORhEE9VVg",
+      title: "Behind The Scenes: Music Video Making",
+      thumbnailUrl: "https://img.youtube.com/vi/e-ORhEE9VVg/hqdefault.jpg",
+      channelName: "Vevo",
+      views: 2200000,
+      category: "Entertainment",
+    },
+    {
+      videoId: "dQw4w9WgXcQ",
+      title: "Classic Internet Hit (Remastered)",
+      thumbnailUrl: "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+      channelName: "RickAstleyVEVO",
+      views: 1500000000,
+      category: "Entertainment",
+    },
+    {
+      videoId: "VYOjWnS4cMY",
+      title: "Championship Highlights - Best Plays",
+      thumbnailUrl: "https://img.youtube.com/vi/VYOjWnS4cMY/hqdefault.jpg",
+      channelName: "SportsCenter",
+      views: 3100000,
+      category: "Sports",
+    },
+    {
+      videoId: "3GwjfUFyY6M",
+      title: "Top 10 Goals - Legendary Matches",
+      thumbnailUrl: "https://img.youtube.com/vi/3GwjfUFyY6M/hqdefault.jpg",
+      channelName: "FIFA",
+      views: 2700000,
+      category: "Sports",
+    },
+    {
+      videoId: "kXYiU_JCYtU",
+      title: "Training Routine: Build Stamina Fast",
+      thumbnailUrl: "https://img.youtube.com/vi/kXYiU_JCYtU/hqdefault.jpg",
+      channelName: "AthletePro",
+      views: 650000,
+      category: "Sports",
+    },
+    {
+      videoId: "mU6anWqZJcc",
+      title: "Best Laptops for Students (2026 Guide)",
+      thumbnailUrl: "https://img.youtube.com/vi/mU6anWqZJcc/hqdefault.jpg",
+      channelName: "Linus Tech Tips",
+      views: 1450000,
+      category: "Computers",
+    },
+    {
+      videoId: "w7ejDZ8SWv8",
+      title: "Build a PC: Step-by-Step Guide",
+      thumbnailUrl: "https://img.youtube.com/vi/w7ejDZ8SWv8/hqdefault.jpg",
+      channelName: "JayzTwoCents",
+      views: 2050000,
+      category: "Computers",
+    },
+    {
+      videoId: "pKd0Rpw7O48",
+      title: "Keyboard Shortcuts That Save Hours",
+      thumbnailUrl: "https://img.youtube.com/vi/pKd0Rpw7O48/hqdefault.jpg",
+      channelName: "Computerphile",
+      views: 720000,
+      category: "Computers",
+    },
+    {
+      videoId: "Ke90Tje7VS0",
+      title: "React Full Tutorial (Beginner Friendly)",
+      thumbnailUrl: "https://img.youtube.com/vi/Ke90Tje7VS0/hqdefault.jpg",
+      channelName: "Programming with Mosh",
+      views: 1520000,
+      category: "IT & Software",
+    },
+    {
+      videoId: "TlB_eWDSMt4",
+      title: "Node.js Crash Course",
+      thumbnailUrl: "https://img.youtube.com/vi/TlB_eWDSMt4/hqdefault.jpg",
+      channelName: "Traversy Media",
+      views: 980000,
+      category: "IT & Software",
+    },
+    {
+      videoId: "ofme2o29ngU",
+      title: "MongoDB in 1 Hour",
+      thumbnailUrl: "https://img.youtube.com/vi/ofme2o29ngU/hqdefault.jpg",
+      channelName: "Academind",
+      views: 760000,
+      category: "IT & Software",
+    },
+    {
+      videoId: "jS4aFq5-91M",
+      title: "JWT Authentication Explained",
+      thumbnailUrl: "https://img.youtube.com/vi/jS4aFq5-91M/hqdefault.jpg",
+      channelName: "Web Dev Simplified",
+      views: 470000,
+      category: "IT & Software",
+    },
+    {
+      videoId: "HGgyd1bYWsE",
+      title: "REST APIs Explained (Simple)",
+      thumbnailUrl: "https://img.youtube.com/vi/HGgyd1bYWsE/hqdefault.jpg",
+      channelName: "Academind",
+      views: 410000,
+      category: "IT & Software",
+    },
+    {
+      videoId: "9bZkp7q19f0",
+      title: "Daily News Roundup - Headlines Today",
+      thumbnailUrl: "https://img.youtube.com/vi/9bZkp7q19f0/hqdefault.jpg",
+      channelName: "News Live",
+      views: 1300000,
+      category: "News",
+    },
+    {
+      videoId: "hY7m5jjJ9mM",
+      title: "Breaking Update: Major Tech Announcement",
+      thumbnailUrl: "https://img.youtube.com/vi/hY7m5jjJ9mM/hqdefault.jpg",
+      channelName: "Tech News",
+      views: 880000,
+      category: "News",
+    },
+    {
+      videoId: "C0DPdy98e4c",
+      title: "World Update: What Happened Today",
+      thumbnailUrl: "https://img.youtube.com/vi/C0DPdy98e4c/hqdefault.jpg",
+      channelName: "Global Report",
+      views: 620000,
+      category: "News",
+    },
+    {
+      videoId: "RGOj5yH7evk",
+      title: "Software Engineer Roadmap (Beginner to Job)",
+      thumbnailUrl: "https://img.youtube.com/vi/RGOj5yH7evk/hqdefault.jpg",
+      channelName: "freeCodeCamp",
+      views: 1250000,
+      category: "IT & Software",
+    },
+  ];
+
+const Home = ({ searchTerm }) => {
+  const [activeCategory, setActiveCategory] = useState("All");
+
+  const filteredVideos = useMemo(() => {
+    const q = searchTerm.trim().toLowerCase();
+
+    return sampleVideos
+      .filter((v) => (activeCategory === "All" ? true : v.category === activeCategory))
+      .filter((v) => (q ? v.title.toLowerCase().includes(q) : true));
+  }, [searchTerm, activeCategory]);
+
   return (
-    <div className="video-grid">
-      {sampleVideos.map((video) => (
-        <VideoCard key={video.videoId} video={video} />
-      ))}
-    </div>
+    <>
+      <div className="filters">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            className={`filter-btn ${activeCategory === cat ? "active" : ""}`}
+            onClick={() => setActiveCategory(cat)}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      <div className="video-grid">
+        {filteredVideos.map((video) => (
+          <VideoCard key={video.videoId} video={video} />
+        ))}
+      </div>
+    </>
   );
 };
 
