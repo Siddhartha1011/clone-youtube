@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { sampleVideos } from "../data/mockVideos";
 import { channelMeta } from "../data/channelMeta";
 import "../styles/channel.css";
 
 const ChannelPage = () => {
   const { name } = useParams();
+  const navigate = useNavigate();
 
   const channelVideos = useMemo(
     () => sampleVideos.filter((v) => v.channelName.toLowerCase() === name.toLowerCase()),
@@ -51,17 +52,22 @@ const ChannelPage = () => {
         {/* ✅ Avatar from channelMeta with fallback */}
         <div className="channel-avatar">
           {meta.avatar ? (
-            <img src={meta.avatar} alt={channelName} />
-          ) : (
-            <span>{channelName?.[0]?.toUpperCase()}</span>
-          )}
+            <img
+              src={meta.avatar}
+              alt={channelName}
+              onError={(e) => {
+                // hide broken image; fallback letter will still show if you want it
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          ) : null}
+          {!meta.avatar && <span>{channelName?.[0]?.toUpperCase()}</span>}
         </div>
 
         <div className="channel-meta">
           <h2 className="channel-title">{channelName}</h2>
           <p className="channel-subtext">
-            {channelVideos.length} videos •{" "}
-            {subscribed ? "Subscribed" : "Not subscribed"}
+            {channelVideos.length} videos • {subscribed ? "Subscribed" : "Not subscribed"}
           </p>
         </div>
 
@@ -91,12 +97,15 @@ const ChannelPage = () => {
             <p>No videos found for this channel.</p>
           ) : (
             channelVideos.map((v) => (
-              <div key={v.videoId} className="channel-video-row">
-                <img
-                  className="row-thumb"
-                  src={v.thumbnailUrl}
-                  alt={v.title}
-                />
+              <div
+                key={v.videoId}
+                className="channel-video-row"
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate(`/video/${v.videoId}`)}
+                onKeyDown={(e) => e.key === "Enter" && navigate(`/video/${v.videoId}`)}
+              >
+                <img className="row-thumb" src={v.thumbnailUrl} alt={v.title} />
                 <div className="row-info">
                   <h4 className="row-title">{v.title}</h4>
                   <p className="row-desc">{v.description}</p>
@@ -112,9 +121,8 @@ const ChannelPage = () => {
         <div className="channel-about">
           <h3>About</h3>
           <p>
-            Welcome to <strong>{channelName}</strong>. This is a mock channel
-            page for your MERN YouTube Clone. Later, you’ll load channel details
-            and videos from MongoDB.
+            Welcome to <strong>{channelName}</strong>. This is a mock channel page for your MERN
+            YouTube Clone. Later, you’ll load channel details and videos from MongoDB.
           </p>
         </div>
       )}
