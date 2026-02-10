@@ -1,14 +1,14 @@
 import express from "express";
 import dotenv from "dotenv";
+import connectDB from "./config/db.js";
 
 dotenv.config();
+connectDB();
 
 const app = express();
 
-// Middleware
 app.use(express.json());
 
-// Test route
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
