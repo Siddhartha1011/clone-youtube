@@ -11,6 +11,9 @@
   }
   
   .sidebar li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     padding: 10px 16px;
     cursor: pointer;
   }
@@ -18,3 +21,4 @@
   .sidebar li:hover {
     background-color: #f2f2f2;
   }
+  

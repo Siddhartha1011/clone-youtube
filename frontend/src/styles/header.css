@@ -7,12 +7,19 @@
     border-bottom: 1px solid #ddd;
   }
   
-  .search-input {
-    width: 40%;
-    padding: 6px 10px;
+  .left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
   
-  .logo {
-    font-weight: bold;
-    font-size: 20px;
+  .center {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .search-input {
+    width: 400px;
+    padding: 6px 10px;
   }
