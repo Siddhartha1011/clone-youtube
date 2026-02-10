@@ -1,0 +1,117 @@
+.video-page {
+    max-width: 980px;
+  }
+  
+  .player-wrap {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .player {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  
+  .vp-title {
+    margin: 12px 0 6px;
+  }
+  
+  .vp-channel {
+    margin: 0 0 8px;
+    color: gray;
+  }
+  
+  .vp-desc {
+    margin: 0 0 14px;
+  }
+  
+  .vp-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 18px;
+    border: 1px solid #ddd;
+    background: #f7f7f7;
+    cursor: pointer;
+  }
+  
+  .action-btn.active {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+  }
+  
+  .comments h3 {
+    margin: 10px 0;
+  }
+  
+  .comment-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  
+  .comment-form input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+  }
+  
+  .comment-form button {
+    padding: 10px 12px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  
+  .comment-form .secondary {
+    background: #eee;
+  }
+  
+  .comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .comment {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 10px 12px;
+  }
+  
+  .comment-head {
+    display: flex;
+    justify-content: space-between;
+    color: gray;
+    font-size: 12px;
+  }
+  
+  .comment-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  
+  .comment-actions button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  
+  .comment-actions .danger {
+    color: #d11;
+  }
+  
