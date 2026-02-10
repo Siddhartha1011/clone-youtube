@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import VideoPage from "./pages/VideoPage";
+import ChannelPage from "./pages/ChannelPage";
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,11 +26,21 @@ const App = () => {
             </Layout>
           }
         />
+
         <Route
           path="/video/:id"
           element={
             <Layout searchTerm={searchTerm} setSearchTerm={setSearchTerm}>
               <VideoPage />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/channel/:name"
+          element={
+            <Layout searchTerm={searchTerm} setSearchTerm={setSearchTerm}>
+              <ChannelPage />
             </Layout>
           }
         />

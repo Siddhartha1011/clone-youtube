@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { sampleVideos } from "../data/mockVideos";
 import { BiLike, BiDislike } from "react-icons/bi";
 import VideoCard from "../components/VideoCard";
@@ -9,6 +9,7 @@ const storageKey = (id) => `video_comments_${id}`;
 
 const VideoPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const video = useMemo(() => sampleVideos.find((v) => v.videoId === id), [id]);
 
@@ -30,7 +31,7 @@ const VideoPage = () => {
 
   if (!video) return <h2>Video not found</h2>;
 
-  //  Related videos: same category, exclude current, limit 8
+  // ✅ Related videos: same category, exclude current, limit 8
   const relatedVideos = useMemo(() => {
     return sampleVideos
       .filter((v) => v.videoId !== id)
@@ -86,27 +87,25 @@ const VideoPage = () => {
     }
   };
 
+  const goToChannel = () => {
+    navigate(`/channel/${encodeURIComponent(video.channelName)}`);
+  };
+
   return (
     <div className="video-page-grid">
       {/* LEFT: Main video section */}
       <div className="video-main">
         <div className="player-wrap">
-          {/*  Use <video> if your videoUrl is MP4 */}
           <video className="player" controls src={video.videoUrl} />
-
-          {/* If you still use iframe embeds, use this instead:
-          <iframe
-            className="player"
-            src={video.videoUrl}
-            title={video.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-          */}
         </div>
 
         <h2 className="vp-title">{video.title}</h2>
-        <p className="vp-channel">{video.channelName}</p>
+
+        {/* ✅ Clickable channel name */}
+        <button className="channel-link" onClick={goToChannel}>
+          {video.channelName}
+        </button>
+
         <p className="vp-desc">{video.description}</p>
 
         <div className="vp-actions">
