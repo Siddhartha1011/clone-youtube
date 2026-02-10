@@ -1,16 +1,26 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js";
-import protect from "./middlewares/auth.middleware.js";
+import protectedRoutes from "./routes/protected.routes.js";
 
 dotenv.config();
 connectDB();
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/protected", protectedRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running...");
@@ -20,10 +30,3 @@ const PORT = process.env.PORT || 3500;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-app.get("/api/protected", protect, (req, res) => {
-    res.json({
-      message: "Access granted",
-      user: req.user,
-    });
-  });
