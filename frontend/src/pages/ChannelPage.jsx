@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { sampleVideos } from "../data/mockVideos";
+import { channelMeta } from "../data/channelMeta";
 import "../styles/channel.css";
 
 const ChannelPage = () => {
@@ -13,9 +14,14 @@ const ChannelPage = () => {
 
   const channelName = channelVideos[0]?.channelName || name;
 
+  // 🎯 get channel metadata by name
+  const meta = channelMeta[channelName] || {};
+
   // localStorage subscribe state per channel
   const storageKey = `subscribed_${channelName.toLowerCase()}`;
-  const [subscribed, setSubscribed] = useState(() => localStorage.getItem(storageKey) === "true");
+  const [subscribed, setSubscribed] = useState(
+    () => localStorage.getItem(storageKey) === "true"
+  );
 
   const [activeTab, setActiveTab] = useState("Videos");
 
@@ -27,19 +33,42 @@ const ChannelPage = () => {
 
   return (
     <div className="channel-page">
-      <div className="channel-banner" />
+      {/* ✅ Banner from channelMeta */}
+      <div
+        className="channel-banner"
+        style={
+          meta.banner
+            ? {
+                backgroundImage: `url(${meta.banner})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }
+            : undefined
+        }
+      />
 
       <div className="channel-header">
-        <div className="channel-avatar">{channelName?.[0]?.toUpperCase()}</div>
+        {/* ✅ Avatar from channelMeta with fallback */}
+        <div className="channel-avatar">
+          {meta.avatar ? (
+            <img src={meta.avatar} alt={channelName} />
+          ) : (
+            <span>{channelName?.[0]?.toUpperCase()}</span>
+          )}
+        </div>
 
         <div className="channel-meta">
           <h2 className="channel-title">{channelName}</h2>
           <p className="channel-subtext">
-            {channelVideos.length} videos • {subscribed ? "Subscribed" : "Not subscribed"}
+            {channelVideos.length} videos •{" "}
+            {subscribed ? "Subscribed" : "Not subscribed"}
           </p>
         </div>
 
-        <button className={`subscribe-btn ${subscribed ? "subbed" : ""}`} onClick={toggleSubscribe}>
+        <button
+          className={`subscribe-btn ${subscribed ? "subbed" : ""}`}
+          onClick={toggleSubscribe}
+        >
           {subscribed ? "Subscribed" : "Subscribe"}
         </button>
       </div>
@@ -63,7 +92,11 @@ const ChannelPage = () => {
           ) : (
             channelVideos.map((v) => (
               <div key={v.videoId} className="channel-video-row">
-                <img className="row-thumb" src={v.thumbnailUrl} alt={v.title} />
+                <img
+                  className="row-thumb"
+                  src={v.thumbnailUrl}
+                  alt={v.title}
+                />
                 <div className="row-info">
                   <h4 className="row-title">{v.title}</h4>
                   <p className="row-desc">{v.description}</p>
@@ -79,8 +112,9 @@ const ChannelPage = () => {
         <div className="channel-about">
           <h3>About</h3>
           <p>
-            Welcome to <strong>{channelName}</strong>. This is a mock channel page for your MERN
-            YouTube Clone. Later, you’ll load channel details and videos from MongoDB.
+            Welcome to <strong>{channelName}</strong>. This is a mock channel
+            page for your MERN YouTube Clone. Later, you’ll load channel details
+            and videos from MongoDB.
           </p>
         </div>
       )}

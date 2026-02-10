@@ -3,33 +3,49 @@
     margin: 0 auto;
   }
   
+  /* ✅ Banner supports image background */
   .channel-banner {
     height: 110px;
     border-radius: 14px;
     background: linear-gradient(90deg, #727171, #444);
+    background-size: cover;
+    background-position: center;
   }
   
+  /* Header */
   .channel-header {
     display: flex;
     align-items: center;
     gap: 14px;
-    margin-top: -28px;
+    margin-top: -18px; /* slightly less overlap for smaller banner */
     padding: 0 8px;
   }
   
+  /* ✅ Avatar supports image + fallback letter */
   .channel-avatar {
     width: 68px;
     height: 68px;
     border-radius: 999px;
     background: #111;
-    color: #fff;
     display: grid;
     place-items: center;
-    font-size: 26px;
-    font-weight: 700;
     border: 3px solid #fff;
+    overflow: hidden; /* 👈 IMPORTANT for images */
   }
   
+  .channel-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .channel-avatar span {
+    color: #fff;
+    font-size: 26px;
+    font-weight: 700;
+  }
+  
+  /* Channel meta */
   .channel-meta {
     flex: 1;
   }
@@ -43,6 +59,7 @@
     color: gray;
   }
   
+  /* Subscribe button */
   .subscribe-btn {
     padding: 10px 14px;
     border: none;
@@ -58,6 +75,7 @@
     border: 1px solid #ddd;
   }
   
+  /* Tabs */
   .channel-tabs {
     display: flex;
     gap: 10px;
@@ -78,6 +96,7 @@
     border-color: #111;
   }
   
+  /* Videos list */
   .channel-videos {
     display: flex;
     flex-direction: column;
@@ -91,6 +110,11 @@
     border-radius: 12px;
     padding: 10px;
     cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  
+  .channel-video-row:hover {
+    background: #f7f7f7;
   }
   
   .row-thumb {
@@ -119,6 +143,7 @@
     font-size: 12px;
   }
   
+  /* About tab */
   .channel-about {
     border: 1px solid #eee;
     border-radius: 12px;
