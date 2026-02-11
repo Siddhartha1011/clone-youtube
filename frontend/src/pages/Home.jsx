@@ -1,20 +1,38 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import VideoCard from "../components/VideoCard";
+import { getVideos } from "../services/videoService";
 import "../styles/video.css";
-import { sampleVideos } from "../data/mockVideos";
 
 const categories = ["All", "Gaming", "Entertainment", "Sports", "Computers", "IT & Software", "News"];
 
 const Home = ({ searchTerm }) => {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const filteredVideos = useMemo(() => {
-    const q = searchTerm.trim().toLowerCase();
-
-    return sampleVideos
-      .filter((v) => (activeCategory === "All" ? true : v.category === activeCategory))
-      .filter((v) => (q ? v.title.toLowerCase().includes(q) : true));
-  }, [searchTerm, activeCategory]);
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    getVideos({
+      category: activeCategory === "All" ? undefined : activeCategory,
+      search: searchTerm.trim() || undefined,
+    })
+      .then((data) => {
+        if (!cancelled) setVideos(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err.response?.data?.message || "Failed to load videos.");
+          setVideos([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [activeCategory, searchTerm]);
 
   return (
     <>
@@ -30,11 +48,19 @@ const Home = ({ searchTerm }) => {
         ))}
       </div>
 
-      <div className="video-grid">
-        {filteredVideos.map((video) => (
-          <VideoCard key={video.videoId} video={video} />
-        ))}
-      </div>
+      {loading && <p className="loading-msg">Loading videos...</p>}
+      {error && <p className="error-msg">{error}</p>}
+      {!loading && !error && (
+        <div className="video-grid">
+          {videos.length === 0 ? (
+            <p>No videos found. Run the backend and seed the database (npm run seed in backend).</p>
+          ) : (
+            videos.map((video) => (
+              <VideoCard key={video.videoId || video._id} video={video} />
+            ))
+          )}
+        </div>
+      )}
     </>
   );
 };

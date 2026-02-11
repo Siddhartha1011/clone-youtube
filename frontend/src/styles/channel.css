@@ -105,16 +105,76 @@
   
   .channel-video-row {
     display: flex;
+    align-items: center;
     gap: 12px;
     border: 1px solid #eee;
     border-radius: 12px;
     padding: 10px;
-    cursor: pointer;
     transition: background 0.15s ease;
   }
   
-  .channel-video-row:hover {
+  .channel-video-row .row-clickable {
+    flex: 1;
+    display: flex;
+    gap: 12px;
+    cursor: pointer;
+  }
+  
+  .channel-video-row .row-clickable:hover {
+    opacity: 0.9;
+  }
+  
+  .channel-video-row .row-actions {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .channel-video-row .row-actions button {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
     background: #f7f7f7;
+  }
+  
+  .channel-video-row .row-actions button.danger {
+    background: #fee;
+    border-color: #fcc;
+  }
+  
+  .channel-form, .video-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+    margin-bottom: 16px;
+  }
+  
+  .channel-form input, .video-edit-form input,
+  .video-edit-form select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  
+  .add-video-btn {
+    padding: 10px 16px;
+    background: #065fd4;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 12px;
+  }
+  
+  .form-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .error-msg {
+    color: #c00;
+    margin-bottom: 10px;
   }
   
   .row-thumb {

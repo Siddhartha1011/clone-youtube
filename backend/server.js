@@ -4,6 +4,9 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js";
 import protectedRoutes from "./routes/protected.routes.js";
+import channelRoutes from "./routes/channel.routes.js";
+import videoRoutes from "./routes/video.routes.js";
+import commentRoutes from "./routes/comment.routes.js";
 
 dotenv.config();
 connectDB();
@@ -21,6 +24,9 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/protected", protectedRoutes);
+app.use("/api/channels", channelRoutes);
+app.use("/api/videos", videoRoutes);
+app.use("/api/comments", commentRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running...");

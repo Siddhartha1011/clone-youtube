@@ -37,7 +37,7 @@ const App = () => {
         />
 
         <Route
-          path="/channel/:name"
+          path="/channel/:id"
           element={
             <Layout searchTerm={searchTerm} setSearchTerm={setSearchTerm}>
               <ChannelPage />

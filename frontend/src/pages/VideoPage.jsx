@@ -1,95 +1,159 @@
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { sampleVideos } from "../data/mockVideos";
 import { BiLike, BiDislike } from "react-icons/bi";
 import VideoCard from "../components/VideoCard";
+import { getVideoById, getVideos, likeVideo as apiLike, dislikeVideo as apiDislike } from "../services/videoService";
+import { getComments, addComment, updateComment, deleteComment } from "../services/commentService";
+import { useAuth } from "../context/AuthContext";
 import "../styles/videoPage.css";
-
-const storageKey = (id) => `video_comments_${id}`;
 
 const VideoPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  const video = useMemo(() => sampleVideos.find((v) => v.videoId === id), [id]);
-
-  const [liked, setLiked] = useState(false);
-  const [disliked, setDisliked] = useState(false);
-
+  const { user } = useAuth();
+  const [video, setVideo] = useState(null);
+  const [relatedVideos, setRelatedVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDislikes] = useState(0);
+  const [userLiked, setUserLiked] = useState(false);
+  const [userDisliked, setUserDisliked] = useState(false);
   const [comments, setComments] = useState([]);
   const [text, setText] = useState("");
   const [editingId, setEditingId] = useState(null);
+  const [commentError, setCommentError] = useState("");
+  const [likeError, setLikeError] = useState("");
 
   useEffect(() => {
-    const saved = localStorage.getItem(storageKey(id));
-    setComments(saved ? JSON.parse(saved) : []);
+    let cancelled = false;
+    setLoading(true);
+    getVideoById(id)
+      .then((v) => {
+        if (!cancelled) {
+          setVideo(v);
+          setLikes(v.likes ?? 0);
+          setDislikes(v.dislikes ?? 0);
+          setUserLiked(!!v.userLiked);
+          setUserDisliked(!!v.userDisliked);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setVideo(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
   }, [id]);
 
   useEffect(() => {
-    localStorage.setItem(storageKey(id), JSON.stringify(comments));
-  }, [comments, id]);
+    if (!video) return;
+    getVideos({ category: video.category })
+      .then((list) => {
+        const related = (list || [])
+          .filter((v) => (v.videoId || v._id) !== id)
+          .slice(0, 8);
+        setRelatedVideos(related);
+      })
+      .catch(() => setRelatedVideos([]));
+  }, [video, id]);
 
-  if (!video) return <h2>Video not found</h2>;
+  useEffect(() => {
+    getComments(id)
+      .then((list) => setComments(Array.isArray(list) ? list : []))
+      .catch(() => setComments([]));
+  }, [id]);
 
-  // ✅ Related videos: same category, exclude current, limit 8
-  const relatedVideos = useMemo(() => {
-    return sampleVideos
-      .filter((v) => v.videoId !== id)
-      .filter((v) => v.category === video.category)
-      .slice(0, 8);
-  }, [id, video.category]);
-
-  const handleLike = () => {
-    setLiked((v) => !v);
-    if (!liked) setDisliked(false);
+  const handleLike = async () => {
+    setLikeError("");
+    if (!user) {
+      setLikeError("Sign in to like or dislike.");
+      return;
+    }
+    try {
+      const res = await apiLike(id);
+      setLikes(res.likes);
+      setDislikes(res.dislikes);
+      setUserLiked(!!res.userLiked);
+      setUserDisliked(!!res.userDisliked);
+    } catch (err) {
+      setLikeError(err.response?.data?.message || "Could not update like.");
+    }
   };
 
-  const handleDislike = () => {
-    setDisliked((v) => !v);
-    if (!disliked) setLiked(false);
+  const handleDislike = async () => {
+    setLikeError("");
+    if (!user) {
+      setLikeError("Sign in to like or dislike.");
+      return;
+    }
+    try {
+      const res = await apiDislike(id);
+      setLikes(res.likes);
+      setDislikes(res.dislikes);
+      setUserLiked(!!res.userLiked);
+      setUserDisliked(!!res.userDisliked);
+    } catch (err) {
+      setLikeError(err.response?.data?.message || "Could not update dislike.");
+    }
   };
 
-  const handleAddOrUpdate = (e) => {
+  const handleAddOrUpdate = async (e) => {
     e.preventDefault();
     const value = text.trim();
     if (!value) return;
-
+    setCommentError("");
     if (editingId) {
-      setComments((prev) =>
-        prev.map((c) => (c.commentId === editingId ? { ...c, text: value } : c))
-      );
-      setEditingId(null);
-      setText("");
+      try {
+        const updated = await updateComment(editingId, value);
+        setComments((prev) =>
+          prev.map((c) => (c.commentId === editingId ? { ...c, ...updated } : c))
+        );
+        setEditingId(null);
+        setText("");
+      } catch (err) {
+        setCommentError(err.response?.data?.message || "Failed to update comment.");
+      }
       return;
     }
-
-    const newComment = {
-      commentId: crypto.randomUUID(),
-      user: "You",
-      text: value,
-      timestamp: new Date().toISOString(),
-    };
-
-    setComments((prev) => [newComment, ...prev]);
-    setText("");
+    if (!user) {
+      setCommentError("Sign in to comment.");
+      return;
+    }
+    try {
+      const newComment = await addComment(id, value);
+      setComments((prev) => [newComment, ...prev]);
+      setText("");
+    } catch (err) {
+      setCommentError(err.response?.data?.message || "Failed to post comment.");
+    }
   };
 
   const startEdit = (comment) => {
-    setEditingId(comment.commentId);
-    setText(comment.text);
-  };
-
-  const removeComment = (commentId) => {
-    setComments((prev) => prev.filter((c) => c.commentId !== commentId));
-    if (editingId === commentId) {
-      setEditingId(null);
-      setText("");
+    if (user && (comment.userId === user._id || comment.user === user.username)) {
+      setEditingId(comment.commentId);
+      setText(comment.text);
     }
   };
 
-  const goToChannel = () => {
-    navigate(`/channel/${encodeURIComponent(video.channelName)}`);
+  const removeComment = async (commentId) => {
+    try {
+      await deleteComment(commentId);
+      setComments((prev) => prev.filter((c) => c.commentId !== commentId));
+      if (editingId === commentId) {
+        setEditingId(null);
+        setText("");
+      }
+    } catch {}
   };
+
+  const goToChannel = () => {
+    if (video?.channelId) navigate(`/channel/${video.channelId}`);
+    else if (video?.channelName) navigate(`/channel/${encodeURIComponent(video.channelName)}`);
+  };
+
+  if (loading) return <p>Loading video...</p>;
+  if (!video) return <h2>Video not found</h2>;
 
   return (
     <div className="video-page-grid">
@@ -109,53 +173,63 @@ const VideoPage = () => {
         <p className="vp-desc">{video.description}</p>
 
         <div className="vp-actions">
-          <button className={`action-btn ${liked ? "active" : ""}`} onClick={handleLike}>
-            <BiLike size={20} /> Like
+          {likeError && <p className="comment-error">{likeError}</p>}
+          <button
+            type="button"
+            className={`action-btn ${userLiked ? "active" : ""}`}
+            onClick={handleLike}
+            title={!user ? "Sign in to like" : ""}
+          >
+            <BiLike size={20} /> Like {likes > 0 && `· ${likes}`}
           </button>
-
-          <button className={`action-btn ${disliked ? "active" : ""}`} onClick={handleDislike}>
-            <BiDislike size={20} /> Dislike
+          <button
+            type="button"
+            className={`action-btn ${userDisliked ? "active" : ""}`}
+            onClick={handleDislike}
+            title={!user ? "Sign in to dislike" : ""}
+          >
+            <BiDislike size={20} /> Dislike {dislikes > 0 && `· ${dislikes}`}
           </button>
         </div>
 
         <div className="comments">
           <h3>Comments</h3>
-
-          <form className="comment-form" onSubmit={handleAddOrUpdate}>
-            <input
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Add a comment..."
-            />
-            <button type="submit">{editingId ? "Update" : "Post"}</button>
-            {editingId && (
-              <button
-                type="button"
-                className="secondary"
-                onClick={() => {
-                  setEditingId(null);
-                  setText("");
-                }}
-              >
-                Cancel
-              </button>
-            )}
-          </form>
+          {commentError && <p className="comment-error">{commentError}</p>}
+          {user && (
+            <form className="comment-form" onSubmit={handleAddOrUpdate}>
+              <input
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Add a comment..."
+              />
+              <button type="submit">{editingId ? "Update" : "Post"}</button>
+              {editingId && (
+                <button
+                  type="button"
+                  className="secondary"
+                  onClick={() => { setEditingId(null); setText(""); }}
+                >
+                  Cancel
+                </button>
+              )}
+            </form>
+          )}
+          {!user && <p className="comment-hint">Sign in to add a comment.</p>}
 
           <div className="comment-list">
             {comments.map((c) => (
               <div key={c.commentId} className="comment">
                 <div className="comment-head">
                   <strong>{c.user}</strong>
-                  <span>{new Date(c.timestamp).toLocaleString()}</span>
+                  <span>{c.timestamp ? new Date(c.timestamp).toLocaleString() : ""}</span>
                 </div>
                 <p>{c.text}</p>
-                <div className="comment-actions">
-                  <button onClick={() => startEdit(c)}>Edit</button>
-                  <button onClick={() => removeComment(c.commentId)} className="danger">
-                    Delete
-                  </button>
-                </div>
+                {user && (c.userId === user._id || c.user === user.username) && (
+                  <div className="comment-actions">
+                    <button onClick={() => startEdit(c)}>Edit</button>
+                    <button onClick={() => removeComment(c.commentId)} className="danger">Delete</button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
